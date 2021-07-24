@@ -31,7 +31,6 @@ for (var i = 0; i < films.length; i++) {
   //
   var newSpanGenre = document.createElement("span");
   newSpanGenre.setAttribute("class", "bold");
-  newSpanGenre.setAttribute("class", "margin-bottom");
 
   for (var j = 0; j < films[i].genres.length; j++) {
     var genreArray = films[i].genres;
