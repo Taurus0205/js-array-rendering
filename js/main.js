@@ -35,7 +35,6 @@ for (var i = 0; i < films.length; i++) {
 
   for (var j = 0; j < films[i].genres.length; j++) {
     var genreArray = films[i].genres;
-    console.log(genreArray);
     newSpanGenre.textContent = genreArray.join(", ");
   }
 
