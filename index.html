@@ -10,7 +10,25 @@
   <body>
     <div class="container">
       <h2 class="margin-bottom">The Catalogue of the Movies</h2>
-      <ul class="list"></ul>
+
+      <div class="films-wrapper">
+        <form class="genres__form">
+          <input
+            class="genres__input"
+            type="text"
+            name="film_genres"
+            id="film_genres"
+            list="film_genresChoice"
+            placeholder="Choose genres"
+            autocomplete="off"
+          />
+          <datalist id="film_genresChoice"> </datalist>
+
+          <button class="genres__btn" type="submit">Find</button>
+        </form>
+
+        <ul class="list"></ul>
+      </div>
     </div>
     <script src="./js/films.js"></script>
     <script src="./js/main.js"></script>
