@@ -8,28 +8,70 @@
     <title>Document</title>
   </head>
   <body>
-    <div class="container">
-      <h2 class="margin-bottom">The Catalogue of the Movies</h2>
+    <section class="movies">
+      <div class="container">
+        <h2 class="movies-heading">IMovie</h2>
+        <form class="movies__form">
+          <label class="movies__form__label">
+            Search
+            <input
+              class="movies__form__input"
+              type="search"
+              placeholder="Search..."
+            />
+          </label>
 
-      <div class="films-wrapper">
-        <form class="genres__form">
-          <input
-            class="genres__input"
-            type="text"
-            name="film_genres"
-            id="film_genres"
-            list="film_genresChoice"
-            placeholder="Choose genres"
-            autocomplete="off"
-          />
-          <datalist id="film_genresChoice"> </datalist>
+          <label class="movies__form__label">
+            Search by genres
+            <select class="movies__form__select" name="movies__genres">
+              <option value="All">All</option>
+            </select>
+          </label>
 
-          <button class="genres__btn" type="submit">Find</button>
+          <label class="movies__form__label">
+            Filter
+            <select
+              class="movies__form__select sort-films"
+              name="movies__genres"
+            >
+              <option value="a_z">A-Z</option>
+              <option value="z_a">Z-A</option>
+              <option value="old_new">old-new</option>
+              <option value="new_old">new-old</option>
+            </select>
+          </label>
+
+          <button class="movies__form__btn" type="submit">Search</button>
         </form>
 
-        <ul class="list"></ul>
+        <ul class="movies__list"></ul>
       </div>
-    </div>
+    </section>
+
+    <template class="movie__template">
+      <li class="movies__item">
+        <img
+          class="movies__img"
+          src="https://via.placeholder.com/150x200"
+          alt="image about the movie"
+          width="150"
+          height="200"
+        />
+
+        <h3 class="movies__heading">Avengers</h3>
+        <p class="movies__paragraph-description">
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Maxime, eos!
+        </p>
+
+        <time class="movies__time" datetime="2021-10-10">2021-07-21</time>
+
+        <ul class="movies__genres-list">
+          <li class="movies__genres">Action</li>
+          <li class="movies__genres">Comedy</li>
+        </ul>
+      </li>
+    </template>
+    <script src="./js/utils.js"></script>
     <script src="./js/films.js"></script>
     <script src="./js/main.js"></script>
   </body>

@@ -1,73 +1,123 @@
-var elList = document.querySelector(".list");
+const elMovieList = selectElement(".movies__list");
+const elMovieTemplate = selectElement(".movie__template").content;
 
-function filmsRender(films) {
-  for (var i = 0; i < films.length; i++) {
-    var newLi = document.createElement("li");
-    newLi.setAttribute("class", "item");
+// Form elements
+const elForm = selectElement(".movies__form");
+const elMoviesInput = selectElement(".movies__form__input", elForm);
+const elSelectGenres = selectElement(".movies__form__select", elForm);
+const elSelectSort = selectElement(".sort-films", elForm);
 
-    var newSpan = document.createElement("span");
-    newSpan.setAttribute("class", "span");
-    newSpan.textContent = films[i].id;
+// Rendering genres
 
-    var newHeading = document.createElement("h3");
-    newHeading.setAttribute("class", "margin-bottom");
-    newHeading.textContent = films[i].title;
-
-    var newImg = document.createElement("img");
-    newImg.setAttribute("class", "margin-bottom");
-    newImg.setAttribute("src", films[i].poster);
-    newImg.setAttribute("width", "150");
-    newImg.setAttribute("height", "250");
-
-    var newParagraph = document.createElement("p");
-    newParagraph.setAttribute("class", "margin-bottom");
-    newParagraph.textContent = films[i].overview;
-
-    var newDateSpan = document.createElement("span");
-    newDateSpan.setAttribute("class", "margin-bottom");
-    // release date
-    var releaseDate = new Date(films[i].release_date);
-    var day = String(releaseDate.getDate()).padStart(2, "0");
-    var month = String(releaseDate.getMonth() + 1).padStart(2, "0");
-    var year = releaseDate.getFullYear();
-    var showDay = day + "." + month + "." + year;
-    newDateSpan.textContent = showDay;
-    //
-    var newSpanGenre = document.createElement("span");
-    newSpanGenre.setAttribute("class", "bold");
-
-    for (var j = 0; j < films[i].genres.length; j++) {
-      var genreArray = films[i].genres;
-      newSpanGenre.textContent = genreArray.join(", ");
-    }
-
-    newLi.appendChild(newSpan);
-    newLi.appendChild(newHeading);
-    newLi.appendChild(newImg);
-    newLi.appendChild(newParagraph);
-    newLi.appendChild(newDateSpan);
-    newLi.appendChild(newSpanGenre);
-    elList.appendChild(newLi);
-  }
-}
-
-function filmsList(films) {
-  var genreList = [];
-  for (var i = 0; i < films.length; i++) {
-    for (var genre of films[i].genres) {
-      if (genreList.includes(genre)) {
-      } else {
-        genreList.push(genre);
-        var newOption = document.createElement("option");
-        newOption.setAttribute("value", genre);
-
-        film_genresChoice.appendChild(newOption);
+function renderGenres(filmArr, element) {
+  const result = [];
+  filmArr.forEach((film) => {
+    film.genres.forEach((genre) => {
+      if (!result.includes(genre)) {
+        result.push(genre);
       }
-    }
-  }
-  return genreList;
+    });
+  });
+
+  result.forEach((genre) => {
+    const newOption = createDOM("option");
+    newOption.value = genre;
+    newOption.textContent = genre;
+
+    element.appendChild(newOption);
+  });
 }
 
-filmsList(films);
+renderGenres(films, elSelectGenres);
 
-filmsRender(films);
+// rendering by genres
+
+// Rendering films
+function filmRender(filmArr, element) {
+  element.innerHTML = null;
+  filmArr.forEach((film) => {
+    const movieTemplate = elMovieTemplate.cloneNode(true);
+
+    selectElement(".movies__img", movieTemplate).setAttribute(
+      "src",
+      film.poster
+    );
+    selectElement(".movies__img", movieTemplate).setAttribute(
+      "alt",
+      film.title
+    );
+
+    selectElement(".movies__heading", movieTemplate).textContent = film.title;
+    selectElement(".movies__paragraph-description", movieTemplate).textContent =
+      film.overview.split(" ").slice(0, 20).join(" ") + " ...";
+
+    selectElement(".movies__time", movieTemplate).textContent = normalizeDate(
+      film.release_date
+    );
+    selectElement(".movies__time", movieTemplate).setAttribute(
+      "datetime",
+      normalizeDate(film.release_date)
+    );
+
+    const genreList = selectElement(".movies__genres-list", movieTemplate);
+    genreList.innerHTML = null;
+
+    film.genres.forEach((genre) => {
+      const newLi = createDOM("li");
+      newLi.textContent = genre;
+      genreList.appendChild(newLi);
+    });
+
+    element.appendChild(movieTemplate);
+  });
+}
+
+filmRender(films, elMovieList);
+
+function sortFilms(filmArr, format) {
+  const sortedAlph = filmArr.sort((a, b) => {
+    if (a.title > b.title) {
+      return 1;
+    } else if (a.title < b.title) {
+      return -1;
+    } else {
+      return 0;
+    }
+  });
+
+  const sortedDate = filmArr.sort((a, b) => a.release_date - b.release_date);
+
+  if (format === "a_z") {
+    return sortedAlph;
+  } else if (format === "z_a") {
+    return sortedAlph.reverse();
+  } else if (format === "old_new") {
+    return sortedDate;
+  } else if (format === "new_old") {
+    return sortedDate.reverse();
+  }
+}
+
+elForm.addEventListener("submit", (evt) => {
+  evt.preventDefault();
+
+  const moviesInput = elMoviesInput.value.trim();
+  const regex = new RegExp(moviesInput, "gi");
+  const searchedFilms = films.filter((film) => film.title.match(regex));
+  const selectGenre = elSelectGenres.value.trim();
+  const selectSort = elSelectSort.value.trim();
+
+  let genredFilms = [];
+
+  if (selectGenre === "All") {
+    genredFilms = searchedFilms;
+  } else {
+    genredFilms = searchedFilms.filter((film) =>
+      film.genres.includes(selectGenre)
+    );
+  }
+
+  const sortedFilms = sortFilms(genredFilms, selectSort);
+
+  filmRender(sortedFilms, elMovieList);
+});
